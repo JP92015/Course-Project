@@ -1,0 +1,32 @@
+## load training data
+> setwd("~/Desktop/Programming/Coursera/Getting and Cleaning Data/Project/UCI HAR Dataset/train")
+> trainX <- read.table("X_train.txt")
+> trainY <- read.table("Y_train.txt")
+> trainSub <- read.table("subject_train.txt")
+> trainFull <- bind_cols(trainSub,trainY)
+> trainFull <- bind_cols(trainFull, trainX)
+
+## load testing data
+> setwd("~/Desktop/Programming/Coursera/Getting and Cleaning Data/Project/UCI HAR Dataset/test")
+> testX <- read.table("X_test.txt")
+> testY <- read.table("y_test.txt")
+> testSub <- read.table("subject_test.txt")
+> testFull <- bind_cols(testSub, testY)
+> testFull <- bind_cols(testFull, textX)
+
+## combine training and testing datasets
+datasetFull <- bind_rows(trainFull, testFull)
+
+## load features and activities information
+> setwd("~/Desktop/Programming/Coursera/Getting and Cleaning Data/Project/UCI HAR Dataset")
+> datasetFeatures <- read.table("features.txt")
+> datasetActivities <- read.table("activity_labels.txt")
+
+## set column name to feature
+names(datasetFull)[3:length(names(datasetFull))] <- as.character(datasetFeatures$V2)
+
+## select columns with mean and std data
+> newnames <- make.names(names=names(datasetFull), unique = TRUE, allow_ = TRUE)
+> selectMeanOrStd <- datasetFull[, grep("[Mm]ean|[Ss]td", names(datasetFull))]
+
+
