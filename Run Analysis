@@ -28,5 +28,13 @@ names(datasetFull)[3:length(names(datasetFull))] <- as.character(datasetFeatures
 ## select columns with mean and std data
 > newnames <- make.names(names=names(datasetFull), unique = TRUE, allow_ = TRUE)
 > selectMeanOrStd <- datasetFull[, grep("[Mm]ean|[Ss]td", names(datasetFull))]
+datasetMeanOrStd <- bind_cols(datasetFull[,1:2], selectMeanOrStd)
 
+## add activity descriptions
+mgdata <- merge(datasetMeanOrStd, datasetActivities, by.x= "Label", by.y= "V1")
+mgdata <- cbind(mgdata[,89], mgdata[,1:88])
+names(mgdata)[1] <- "Activity"
+
+## group by subject
+groupSubject <- group_by(mgdata, Subject)
 
