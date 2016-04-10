@@ -60,7 +60,7 @@ combineSelectAndDescribe <- function(){
 ##find the average of each variable for each activity and each subject
 findAverageByGroups <- function(){
   ## group by activity
- ## groupActivity <- group_by(mgdata, Activity)
+  ## groupActivity <- group_by(mgdata, Activity)
   
   ## within activity, group by subject 
   agmeansbyactivity <<- list()
@@ -90,5 +90,6 @@ tidyData <- function(){
     tidyData <- cbind(tidyData, meansData[[i]])
     tidyDataFull <- rbind(tidyDataFull, tidyData)
   }
+  names(tidyDataFull)[3:length(tidyDataFull)] <- names(mgdata)[4:length(mgdata)]
   tidyDataFull
 }
