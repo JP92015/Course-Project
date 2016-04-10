@@ -65,4 +65,5 @@ fBodyGyroMag
 fBodyGyroJerkMag"
 
 
+
 Mean and Standard Deviation values were then calculated and given in the UCI HAR Dataset. These were extracted for the present analysis. The mean of these mean and standard deviation values were then calculated for each participate undertaking each activity. This is reported in the resulting dataset.
