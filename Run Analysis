@@ -1,40 +1,94 @@
+run_analysis <- function(){
+  library(dplyr)
+  loadTrainingData()
+  loadTestingData()
+  combineSelectAndDescribe()
+  findAverageByGroups()
+  tidyData()
+  
+}
+
 ## load training data
-> setwd("~/Desktop/Programming/Coursera/Getting and Cleaning Data/Project/UCI HAR Dataset/train")
-> trainX <- read.table("X_train.txt")
-> trainY <- read.table("Y_train.txt")
-> trainSub <- read.table("subject_train.txt")
-> trainFull <- bind_cols(trainSub,trainY)
-> trainFull <- bind_cols(trainFull, trainX)
+loadTrainingData <- function(){
+  setwd("~/Desktop/Programming/Coursera/Getting and Cleaning Data/Project/UCI HAR Dataset/train")
+  trainX <- read.table("X_train.txt")
+  trainY <- read.table("Y_train.txt")
+  trainSub <- read.table("subject_train.txt")
+  trainFull <- bind_cols(trainSub,trainY)
+  trainFull <- bind_cols(trainFull, trainX)
+  names(trainFull)[1:2] <- c("Subject", "Label")
+  trainFull <<- trainFull 
+}
+
 
 ## load testing data
-> setwd("~/Desktop/Programming/Coursera/Getting and Cleaning Data/Project/UCI HAR Dataset/test")
-> testX <- read.table("X_test.txt")
-> testY <- read.table("y_test.txt")
-> testSub <- read.table("subject_test.txt")
-> testFull <- bind_cols(testSub, testY)
-> testFull <- bind_cols(testFull, textX)
+loadTestingData <- function(){
+  setwd("~/Desktop/Programming/Coursera/Getting and Cleaning Data/Project/UCI HAR Dataset/test")
+  testX <- read.table("X_test.txt")
+  testY <- read.table("y_test.txt")
+  testSub <- read.table("subject_test.txt")
+  testFull <- bind_cols(testSub, testY)
+  testFull <- bind_cols(testFull, testX)
+  names(testFull)[1:2] <- c("Subject", "Label")
+  testFull <<- testFull
+}
 
-## combine training and testing datasets
-datasetFull <- bind_rows(trainFull, testFull)
+## combine training and testing data, select mean and std columns, and describe activities
+combineSelectAndDescribe <- function(){
+  datasetFull <- bind_rows(trainFull, testFull)
+  
+  ## load features and activities information
+  setwd("~/Desktop/Programming/Coursera/Getting and Cleaning Data/Project/UCI HAR Dataset")
+  datasetFeatures <- read.table("features.txt")
+  datasetActivities <- read.table("activity_labels.txt")
+  
+  ## set column name to feature
+  names(datasetFull)[3:length(names(datasetFull))] <- as.character(datasetFeatures$V2)
+  
+  ## select columns with mean and std data
+  newnames <- make.names(names=names(datasetFull), unique = TRUE, allow_ = TRUE)
+  selectMeanOrStd <- datasetFull[, grep("[Mm]ean|[Ss]td", names(datasetFull))]
+  datasetMeanOrStd <- bind_cols(datasetFull[,1:2], selectMeanOrStd)
+  
+  ## add activity descriptions
+  mgdata <- merge(datasetMeanOrStd, datasetActivities, by.x= "Label", by.y= "V1")
+  mgdata <- cbind(mgdata[,89], mgdata[,1:88])
+  names(mgdata)[1] <- "Activity"
+  mgdata <<- mgdata 
+}
 
-## load features and activities information
-> setwd("~/Desktop/Programming/Coursera/Getting and Cleaning Data/Project/UCI HAR Dataset")
-> datasetFeatures <- read.table("features.txt")
-> datasetActivities <- read.table("activity_labels.txt")
+##find the average of each variable for each activity and each subject
+findAverageByGroups <- function(){
+  ## group by activity
+ ## groupActivity <- group_by(mgdata, Activity)
+  
+  ## within activity, group by subject 
+  agmeansbyactivity <<- list()
+  mgtable <<- tbl_df(mgdata)
+  
+  for(i in 1:length(unique(mgdata$Activity))){
+    fDataA <<- filter(mgtable, Activity == unique(mgtable$Activity)[i])
+    
+    agmeans <- NULL
+    means <- NULL
+    for(j in 4:length(fDataA)){
+      means <- tapply(fDataA[[j]], fDataA$Subject, mean, na.rm = TRUE)
+      agmeans <- c(agmeans, means)
+      meansMatrix <- matrix(agmeans, nrow=30, byrow = FALSE)
+    }
+    agmeansbyactivity[[i]] <<- meansMatrix
+    names(agmeansbyactivity)[i] <<- as.character(unique(mgtable$Activity)[i])
+  }
+  meansData <<- agmeansbyactivity
+}
 
-## set column name to feature
-names(datasetFull)[3:length(names(datasetFull))] <- as.character(datasetFeatures$V2)
-
-## select columns with mean and std data
-> newnames <- make.names(names=names(datasetFull), unique = TRUE, allow_ = TRUE)
-> selectMeanOrStd <- datasetFull[, grep("[Mm]ean|[Ss]td", names(datasetFull))]
-datasetMeanOrStd <- bind_cols(datasetFull[,1:2], selectMeanOrStd)
-
-## add activity descriptions
-mgdata <- merge(datasetMeanOrStd, datasetActivities, by.x= "Label", by.y= "V1")
-mgdata <- cbind(mgdata[,89], mgdata[,1:88])
-names(mgdata)[1] <- "Activity"
-
-## group by subject
-groupSubject <- group_by(mgdata, Subject)
-
+## report variable means by activty by subject
+tidyData <- function(){
+  tidyDataFull <- data.frame()
+  for(i in 1:length(meansData)){
+    tidyData <- data.frame("Activity"=rep(names(meansData)[i], nrow(meansData[[i]])), "Subject" = 1:nrow(meansData[[i]]))
+    tidyData <- cbind(tidyData, meansData[[i]])
+    tidyDataFull <- rbind(tidyDataFull, tidyData)
+  }
+  tidyDataFull
+}
