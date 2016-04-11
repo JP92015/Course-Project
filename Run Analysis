@@ -10,7 +10,7 @@ run_analysis <- function(){
 
 ## load training data
 loadTrainingData <- function(){
-  setwd("~/Desktop/Programming/Coursera/Getting and Cleaning Data/Project/UCI HAR Dataset/train")
+  setwd("~/UCI HAR Dataset/train")
   trainX <- read.table("X_train.txt")
   trainY <- read.table("Y_train.txt")
   trainSub <- read.table("subject_train.txt")
@@ -23,7 +23,7 @@ loadTrainingData <- function(){
 
 ## load testing data
 loadTestingData <- function(){
-  setwd("~/Desktop/Programming/Coursera/Getting and Cleaning Data/Project/UCI HAR Dataset/test")
+  setwd("~/UCI HAR Dataset/test")
   testX <- read.table("X_test.txt")
   testY <- read.table("y_test.txt")
   testSub <- read.table("subject_test.txt")
@@ -38,7 +38,7 @@ combineSelectAndDescribe <- function(){
   datasetFull <- bind_rows(trainFull, testFull)
   
   ## load features and activities information
-  setwd("~/Desktop/Programming/Coursera/Getting and Cleaning Data/Project/UCI HAR Dataset")
+  setwd("~/UCI HAR Dataset")
   datasetFeatures <- read.table("features.txt")
   datasetActivities <- read.table("activity_labels.txt")
   
