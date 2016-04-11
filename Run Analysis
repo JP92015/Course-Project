@@ -66,30 +66,32 @@ findAverageByGroups <- function(){
   agmeansbyactivity <<- list()
   mgtable <<- tbl_df(mgdata)
   
-  for(i in 1:length(unique(mgdata$Activity))){
-    fDataA <<- filter(mgtable, Activity == unique(mgtable$Activity)[i])
-    
-    agmeans <- NULL
-    means <- NULL
-    for(j in 4:length(fDataA)){
-      means <- tapply(fDataA[[j]], fDataA$Subject, mean, na.rm = TRUE)
-      agmeans <- c(agmeans, means)
-      meansMatrix <- matrix(agmeans, nrow=30, byrow = FALSE)
-    }
-    agmeansbyactivity[[i]] <<- meansMatrix
-    names(agmeansbyactivity)[i] <<- as.character(unique(mgtable$Activity)[i])
-  }
-  meansData <<- agmeansbyactivity
-}
-
-## report variable means by activty by subject
-tidyData <- function(){
-  tidyDataFull <- data.frame()
-  for(i in 1:length(meansData)){
-    tidyData <- data.frame("Activity"=rep(names(meansData)[i], nrow(meansData[[i]])), "Subject" = 1:nrow(meansData[[i]]))
-    tidyData <- cbind(tidyData, meansData[[i]])
-    tidyDataFull <- rbind(tidyDataFull, tidyData)
-  }
-  names(tidyDataFull)[3:length(tidyDataFull)] <- names(mgdata)[4:length(mgdata)]
+  tidyDataFull <- summarise_each(group_by(mgdata,Subject,Activity),funs(mean))
+  
+#   for(i in 1:length(unique(mgdata$Activity))){
+#     fDataA <<- filter(mgtable, Activity == unique(mgtable$Activity)[i])
+#     
+#     agmeans <- NULL
+#     means <- NULL
+#     for(j in 4:length(fDataA)){
+#       means <- tapply(fDataA[[j]], fDataA$Subject, mean, na.rm = TRUE)
+#       agmeans <- c(agmeans, means)
+#       meansMatrix <- matrix(agmeans, nrow=30, byrow = FALSE)
+#     }
+#     agmeansbyactivity[[i]] <<- meansMatrix
+#     names(agmeansbyactivity)[i] <<- as.character(unique(mgtable$Activity)[i])
+#   }
+#   meansData <<- agmeansbyactivity
+# }
+# 
+# ## report variable means by activty by subject
+# tidyData <- function(){
+#   tidyDataFull <- data.frame()
+#   for(i in 1:length(meansData)){
+#     tidyData <- data.frame("Activity"=rep(names(meansData)[i], nrow(meansData[[i]])), "Subject" = 1:nrow(meansData[[i]]))
+#     tidyData <- cbind(tidyData, meansData[[i]])
+#     tidyDataFull <- rbind(tidyDataFull, tidyData)
+#   }
+#   names(tidyDataFull)[3:length(tidyDataFull)] <- names(mgdata)[4:length(mgdata)]
   tidyDataFull
 }
