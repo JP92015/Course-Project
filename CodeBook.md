@@ -1,5 +1,8 @@
 # Assignment: Getting and Cleaning Data Course Project
-Getting and Cleaning Data Course Project
+
+Related files:
+Source Data: UCI HAR Dataset; Human Activity Recognition Using Smartphones
+http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones
 
 This dataset is derived from the UCI HAR Dataset, the description of which follows:
 
